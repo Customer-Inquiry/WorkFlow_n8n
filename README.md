@@ -8,7 +8,7 @@ AI를 활용하여 고객 문의를 자동으로 분류하고 적절한 담당�
 ## 🛠️ 기술 스택
 
 - **워크플로우 엔진**: n8n (1.104.2)
-- **AI 모델**: Google Gemma 3
+- **AI 모델**: Google Gemma 3 27B 1T
 - **API**: Google Generative Language API
 - **알림 시스템**: 
   - Gmail (이메일 알림)
@@ -154,7 +154,8 @@ The service is receiving too many requests from you
 ```
 bbutterbread.shop
 ```
-
+#### 웹훅 URL
+POST https://bbutterbread.shop/webhook/customer-inquiry
 
 
 
@@ -163,7 +164,6 @@ bbutterbread.shop
 
 - **개발자**: 정유진
 - **이메일**: juj990717@gmail.com
-- **전화번호**: 010-8947-4352
 
 ---
-# workflow
+
