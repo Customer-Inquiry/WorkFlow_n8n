@@ -8,7 +8,7 @@ AI를 활용하여 고객 문의를 자동으로 분류하고 적절한 담당�
 ## 🛠️ 기술 스택
 
 - **워크플로우 엔진**: n8n (1.104.2)
-- **AI 모델**: Google Gemma 3 27B IT (`gemma-3-27b-it`)
+- **AI 모델**: Google Gemma 3
 - **API**: Google Generative Language API
 - **알림 시스템**: 
   - Gmail (이메일 알림)
