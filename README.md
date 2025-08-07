@@ -165,8 +165,8 @@ https://bbutterbread.shop/webhook/customer-inquiry
 
 ## 📞 지원 및 문의
 
-**정유진**
-- **이메일**: juj990717@gmail.com
+
+**이메일**: juj990717@gmail.com
 
 ---
 
