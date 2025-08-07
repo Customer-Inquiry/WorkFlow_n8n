@@ -147,6 +147,11 @@ The service is receiving too many requests from you
 **해결**: Gemma 3 27B IT로 모델 변경
 
 
+### 3. 폼 제출 오류
+**문제**: 폼 제출 시 CORS 오류
+
+**해결**: n8n 셀프 호스팅
+
 ### 3. 웹 훅 url 불일치
 **문제**: Self-Hosted 시 웹 훅 url이 변경되는 문제
 
