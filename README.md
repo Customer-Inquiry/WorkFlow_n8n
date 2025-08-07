@@ -156,11 +156,9 @@ The service is receiving too many requests from you
 **문제**: Self-Hosted 시 웹 훅 url이 변경되는 문제
 
 **해결**: 도메인 구매
-```
-bbutterbread.shop
-```
+
 #### 웹훅 URL
-POST https://bbutterbread.shop/webhook/customer-inquiry
+https://bbutterbread.shop/webhook/customer-inquiry
 
 
 
