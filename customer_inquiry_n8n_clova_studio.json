@@ -1,0 +1,313 @@
+{
+  "name": "customer_inquiry_n8n_clova_studio",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://clovastudio.stream.ntruss.com/v3/chat-completions/HCX-007",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"아래의 문의 내용을 [영업 문의, 기술 지원, 일반 문의] 중 하나로 분류해주세요.\\n긴급도를 1~10 숫자로만 분류해서 함께 출력해주세요.\\n\\n문의 내용: {{ $json.body.message.replace(/\\\"/g, '\\\\\\\"') }}\\n\\n응답은 반드시 '문의유형 숫자' 형식으로 출력하세요. 예: 기술 지원 3\\n다른 말이나 설명은 절대로 하지 마세요.\"\n    }\n  ],\n  \"temperature\": 0,\n  \"repeatPenalty\": 1.5,\n  \"includeAiFilters\": false,\n  \"system\": \"응답은 반드시 '[영업 문의, 기술 지원, 일반 문의] 중 하나 + 1~10 숫자' 형식으로 정확하게 출력하세요. 예: 일반 문의 7. 추가 설명, 마침표, 줄바꿈, 다른 문장은 절대로 포함하지 마세요.\"\n}\n",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        64
+      ],
+      "id": "11206cba-ba3c-4ba2-8ed4-2e803e282ea6",
+      "name": "HTTP Request",
+      "retryOnFail": false,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "I8qSk5a0qUcELfQU",
+          "name": "Query Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "V3yHxYLeVgGmMPB8",
+          "name": "Header Auth account"
+        },
+        "httpBearerAuth": {
+          "id": "KZS8RIiSsvJhTesQ",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.inquiry_type }}",
+                    "rightValue": "영업 문의",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "8830c2f5-b650-4fae-8502-d5cd6fbf327d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "sales_inquiry"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3b188879-9185-4b54-84b4-bf61a2873db1",
+                    "leftValue": "={{ $json.inquiry_type }}",
+                    "rightValue": "기술 지원",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tech_support"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        48
+      ],
+      "id": "10fa46dd-00af-43f1-91c2-973ffd7feeeb",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "matzipblogger@naver.com",
+        "subject": "={{ \n  `${Number($json.urgency_score || 0) >= 8 ? '[긴급] ' : ''}[신규 영업 문의] ${$('Webhook').item.json.body.name}` \n}}",
+        "emailType": "text",
+        "message": "={{ $('Webhook').item.json.body.message }}\n\n새로운 비즈니스 기회입니다. 빠른 확인 바랍니다.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        -128
+      ],
+      "id": "d6065d4e-2517-4ee2-8ec3-a1b13a442610",
+      "name": "영업 문의",
+      "webhookId": "13218542-c8e3-4efc-85d6-601f942f036e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dj0i09ER2FsiN1bt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09921XS91R",
+          "mode": "list",
+          "cachedResultName": "고객-문의-채널"
+        },
+        "text": "={{ \n  `${Number($json.urgency_score || 0) >= 8 ? '[긴급] ' : ''}새 문의\\n\\n이름 : ${$json.body.name}\\n이메일 : ${$json.body.email}\\n문의 내용 : ${$json.body.message}`\n}}\n{{ $json.inquiry_type }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        256
+      ],
+      "id": "0517f237-b5d3-4138-a44f-1a679912979f",
+      "name": "etc..",
+      "webhookId": "32708d71-a230-4894-b52a-b0fd530d308f",
+      "credentials": {
+        "slackApi": {
+          "id": "jcnlLR9z4sAkDfFb",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "matzipblogger@naver.com",
+        "subject": "={{ \n  `${Number($json.urgency_score || 0) >= 8 ? '[긴급] ' : ''}[기술 지원 요청] ${$('Webhook').item.json.body.name}` \n}}",
+        "emailType": "text",
+        "message": "={{ $('Webhook').item.json.body.message }}\n\n고객의 기술적인 문제 해결이 필요합니다.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        64
+      ],
+      "id": "61ea5e14-5bf4-4318-bea7-e4dc48874118",
+      "name": "기술 지원",
+      "webhookId": "13218542-c8e3-4efc-85d6-601f942f036e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dj0i09ER2FsiN1bt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "customer-inquiry",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        64
+      ],
+      "id": "59797c38-3750-48f1-a732-f7c51b1a203a",
+      "name": "Webhook",
+      "webhookId": "5de903aa-71c8-4a66-84eb-5f6292dff295"
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = $input.first().json.result.message.content.trim();\nconst parts = content.split(\" \");\nconst urgency = parseInt(parts.pop());\nconst category = parts.join(\" \");\n\n// Webhook에서 body 가져오기\nconst body = $items(\"Webhook\")[0].json.body;\n\nreturn {\n  inquiry_type: category,\n  urgency_score: urgency,\n  body\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        64
+      ],
+      "id": "8b404d90-50df-4c6e-9627-a17eba49691c",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "영업 문의",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "기술 지원",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "etc..",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "영업 문의": {
+      "main": [
+        []
+      ]
+    },
+    "etc..": {
+      "main": [
+        []
+      ]
+    },
+    "기술 지원": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "08977a77-ca6a-44f3-8143-9310352033b1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ce5fc532d0e90e542ac9aaa00d323d943edf22b26bb286d7becd92f458034c15"
+  },
+  "id": "CVCVvYzL7MUpmj1n",
+  "tags": []
+}
