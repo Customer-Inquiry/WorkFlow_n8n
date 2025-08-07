@@ -130,10 +130,10 @@ graph TD
 JSON parameter needs to be valid JSON
 ```
 
-**해결**: Code 노드를 사용한 안전한 문자열 처리, JSON.stringify함수 사용
+**해결**: Code 노드를 사용한 안전한 문자열 처리, JSON.stringify 함수 사용
 
 
-### 2. API 사용량 제한
+### 2. API 문제
 
 **문제**: Hugging Face Interface 정확도 떨어짐
 
