@@ -157,11 +157,9 @@ The service is receiving too many requests from you
 
 **해결**: 도메인 구매
 
-#### 웹훅 URL
-https://bbutterbread.shop/webhook/customer-inquiry
 
-
-
+## Git
+### https://github.com/Customer-Inquiry/WorkFlow_n8n/
 
 ## 📞 지원 및 문의
 
