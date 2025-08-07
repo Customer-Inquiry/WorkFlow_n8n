@@ -159,19 +159,6 @@ bbutterbread.shop
 
 
 
-## 🔧 배포 및 운영
-
-### Docker 실행
-```bash
-docker run -d --name n8n -p 5678:5678 n8nio/n8n
-```
-
-
-### 웹훅 URL
-```
-POST https://your-n8n-domain.com/webhook/customer-inquiry
-```
-
 ## 📞 지원 및 문의
 
 - **개발자**: 정유진
