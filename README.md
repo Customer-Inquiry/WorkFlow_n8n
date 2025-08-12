@@ -152,7 +152,7 @@ The service is receiving too many requests from you
 
 **해결**: n8n 셀프 호스팅
 
-### 3. 웹 훅 url 불일치
+### 4. 웹 훅 url 불일치
 **문제**: Self-Hosted 시 웹 훅 url이 변경되는 문제
 
 **해결**: 도메인 구매
